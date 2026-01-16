@@ -19,6 +19,7 @@ import CommunityWrite from "./pages/CommunityWrite";
 import QuickStart from "./pages/QuickStart";
 import Waiting from "./pages/Waiting";
 import ChatRoom from "./pages/ChatRoom";
+import Policy from "./pages/Policy";
 
 /* ===== 공통 컴포넌트 ===== */
 import Footer from "./components/Footer";
@@ -63,6 +64,9 @@ export default function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/auth/login" element={<Login />} />
           <Route path="/auth/signup" element={<Signup />} />
+
+          {/* 📜 정책 페이지 */}
+          <Route path="/policy" element={<Policy />} />
 
           {/* 🔐 로그인 후 메인 */}
           <Route path="/home" element={<Home />} />
