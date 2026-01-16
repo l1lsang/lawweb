@@ -31,17 +31,28 @@ function LayoutWithTabs({ children }) {
   const location = useLocation();
   const { pathname } = location;
 
+  /* ===============================
+     BottomTabs 노출 조건
+     =============================== */
   const showTabs =
     pathname === "/home" ||
     pathname === "/chat" ||
     pathname === "/store" ||
     pathname === "/community";
 
+  /* ===============================
+     Footer 노출 조건 (앱 기준)
+     =============================== */
+  const showFooter =
+    pathname === "/" ||                 // 랜딩
+    pathname.startsWith("/auth") ||     // 로그인 / 회원가입
+    pathname === "/store";              // 상점
+
   return (
     <div className="app-layout">
       <div className="page-scroll">
         {children}
-        <Footer />
+        {showFooter && <Footer />}
       </div>
 
       {showTabs && <BottomTabs />}
