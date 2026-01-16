@@ -1,0 +1,84 @@
+/* =========================
+   🌍 전체
+========================= */
+.signup {
+  min-height: 100vh;
+  background: #f5f6f8;
+  display: flex;
+  flex-direction: column;
+}
+
+/* =========================
+   🔵 Hero
+========================= */
+.signup-hero {
+  background: #2f6fff;
+  padding: 80px 24px 50px;
+  border-bottom-left-radius: 32px;
+  border-bottom-right-radius: 32px;
+  text-align: center;
+}
+
+.signup-hero h1 {
+  font-size: 30px;
+  font-weight: 800;
+  color: white;
+  margin: 0;
+}
+
+.signup-hero p {
+  margin-top: 12px;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* =========================
+   ⚪ 카드
+========================= */
+.signup-card {
+  margin-top: -30px;
+  margin-left: 20px;
+  margin-right: 20px;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 22px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+.signup-card input {
+  width: 100%;
+  background: #f1f5f9;
+  padding: 16px;
+  border-radius: 14px;
+  border: none;
+  font-size: 15px;
+  margin-bottom: 14px;
+}
+
+.signup-card button {
+  width: 100%;
+  background: #2f6fff;
+  color: white;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.signup-card button:disabled {
+  background: #cbd5e1;
+}
+
+/* =========================
+   🔗 로그인 이동
+========================= */
+.login-link {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  color: #2f6fff;
+  cursor: pointer;
+}

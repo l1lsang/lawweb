@@ -1,0 +1,38 @@
+.chat-bubble {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: none;
+
+  padding: 12px 16px;
+  margin: 6px 0;
+  max-width: 75%;
+  border-radius: 16px;
+  font-size: 16px;
+  color: white;
+  line-height: 1.4;
+  word-break: break-word;
+
+  transition:
+    opacity 0.2s ease-out,
+    transform 0.2s ease-out;
+}
+
+/* 애니메이션 시작 상태 */
+.chat-bubble.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 사용자 */
+.chat-bubble.user {
+  align-self: flex-end;
+  background-color: #3b82f6;
+  border-bottom-right-radius: 0;
+}
+
+/* 상대방 */
+.chat-bubble.other {
+  align-self: flex-start;
+  background-color: #1e293b;
+  border-bottom-left-radius: 0;
+}

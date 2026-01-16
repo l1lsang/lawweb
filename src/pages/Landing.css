@@ -1,0 +1,73 @@
+/* =========================
+   🌍 전체 레이아웃
+========================= */
+.landing {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f6f8;
+}
+
+/* =========================
+   🔵 Hero 영역
+========================= */
+.landing-hero {
+  flex: 1;
+  background-color: #2f6fff; /* Colors.primary */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0 30px;
+  text-align: center;
+}
+
+.landing-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: white;
+  margin: 0;
+}
+
+.landing-sub {
+  margin-top: 14px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* =========================
+   ⚪ CTA 카드
+========================= */
+.landing-cta {
+  background-color: #ffffff;
+  padding: 30px;
+  border-top-left-radius: 32px;
+  border-top-right-radius: 32px;
+  margin-top: -30px;
+  box-shadow: 0 -6px 14px rgba(0, 0, 0, 0.08);
+}
+
+/* =========================
+   🔘 버튼
+========================= */
+.btn {
+  width: 100%;
+  padding: 16px;
+  border-radius: 16px;
+  font-size: 18px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+}
+
+.btn.primary {
+  background-color: #2f6fff;
+  color: white;
+  margin-bottom: 14px;
+}
+
+.btn.ghost {
+  background-color: #eef2ff;
+  color: #2f6fff;
+}

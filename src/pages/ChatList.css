@@ -1,0 +1,94 @@
+.chat-list {
+  min-height: 100vh;
+  background-color: #f5f6f8;
+}
+
+/* 타이틀 */
+.chat-header {
+  padding: 24px 20px 10px;
+}
+
+.chat-header h1 {
+  font-size: 24px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.chat-header p {
+  margin-top: 4px;
+  color: #666;
+  font-size: 14px;
+}
+
+/* 리스트 */
+.chat-rooms {
+  padding: 20px;
+}
+
+/* 카드 */
+.chat-card {
+  background-color: #ffffff;
+  padding: 18px;
+  border-radius: 18px;
+  margin-bottom: 14px;
+  cursor: pointer;
+
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.chat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.12);
+}
+
+/* 상단 */
+.chat-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #222;
+}
+
+.chat-time {
+  font-size: 12px;
+  color: #999;
+}
+
+/* 미리보기 */
+.chat-preview {
+  display: flex;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.chat-message {
+  flex: 1;
+  color: #666;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-unread {
+  background-color: #ef4444;
+  min-width: 22px;
+  height: 22px;
+  border-radius: 11px;
+  margin-left: 8px;
+  padding: 0 6px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+}

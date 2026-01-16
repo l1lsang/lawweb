@@ -1,0 +1,100 @@
+.detail {
+  min-height: 100vh;
+  background: #f5f6f8;
+  padding: 20px;
+}
+
+.center {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sub { color: #666; }
+
+/* 헤더 */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.back {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.header h1 {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0;
+}
+
+/* 카드 */
+.card {
+  background: #fff;
+  padding: 18px;
+  border-radius: 18px;
+  box-shadow: 0 6px 12px rgba(0,0,0,.08);
+  margin-bottom: 20px;
+}
+
+.title { font-size: 20px; font-weight: 800; }
+.content { color: #555; line-height: 22px; margin: 10px 0; }
+.meta { font-size: 12px; color: #999; }
+
+/* 댓글 */
+.section { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+.empty { color: #999; margin-bottom: 10px; }
+
+.comment {
+  background: #f8fafc;
+  padding: 14px;
+  border-radius: 14px;
+  margin-bottom: 10px;
+}
+
+.anon { font-weight: 800; font-size: 13px; }
+.comment-text { margin: 4px 0; }
+.time { font-size: 11px; color: #999; }
+
+/* 입력 */
+.input-wrap {
+  position: sticky;
+  bottom: 0;
+  background: #f5f6f8;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 20px;
+}
+
+.hint { color: #999; margin-bottom: 10px; }
+
+.input {
+  width: 100%;
+  min-height: 90px;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  background: #f1f5f9;
+  resize: none;
+}
+
+.submit {
+  margin-top: 10px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 14px;
+  border: none;
+  background: #2f6fff;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.submit:disabled {
+  background: #cbd5e1;
+}

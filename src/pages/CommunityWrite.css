@@ -1,0 +1,84 @@
+.write {
+  min-height: 100vh;
+  background: #f5f6f8;
+  padding: 20px;
+}
+
+/* 공통 중앙 */
+.center {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-card {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 20px;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+  box-shadow: 0 6px 12px rgba(0,0,0,.08);
+}
+
+/* 헤더 */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.back {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.header h1 {
+  font-size: 22px;
+  font-weight: 800;
+  margin: 0;
+}
+
+/* 카드 */
+.card {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 6px 12px rgba(0,0,0,.08);
+}
+
+/* 입력 */
+.input {
+  width: 100%;
+  background: #f1f5f9;
+  border: none;
+  border-radius: 14px;
+  padding: 14px;
+  font-size: 16px;
+  margin-bottom: 14px;
+}
+
+.textarea {
+  min-height: 220px;
+  resize: vertical;
+}
+
+/* 버튼 */
+.submit {
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  background: #2f6fff;
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.submit:disabled {
+  background: #cbd5e1;
+}

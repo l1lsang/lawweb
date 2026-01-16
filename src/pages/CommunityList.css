@@ -1,0 +1,119 @@
+.community {
+  min-height: 100vh;
+  background-color: #f5f6f8;
+  padding: 20px;
+}
+
+/* 상단 */
+.community-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.community-header h1 {
+  font-size: 24px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.community-header p {
+  margin-top: 4px;
+  color: #666;
+}
+
+.write-btn {
+  background-color: #2f6fff;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* 비로그인 */
+.login-hint {
+  background-color: #eef2ff;
+  padding: 14px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: #555;
+}
+
+/* empty */
+.empty-text {
+  color: #999;
+  margin-top: 10px;
+}
+
+/* 카드 */
+.post-card {
+  background-color: #ffffff;
+  padding: 18px;
+  border-radius: 18px;
+  margin-bottom: 14px;
+  cursor: pointer;
+
+  border-left: 4px solid;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.post-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.12);
+}
+
+/* 프로필 */
+.post-profile {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.profile-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background-color: #f8fafc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  margin-right: 10px;
+}
+
+.profile-label {
+  font-size: 13px;
+  font-weight: 800;
+}
+
+/* 제목 */
+.post-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+/* 내용 (2줄 제한) */
+.post-content {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+  line-height: 20px;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 하단 */
+.post-footer {
+  font-size: 12px;
+  color: #999;
+}

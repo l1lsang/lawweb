@@ -1,0 +1,39 @@
+.policy {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 40px 20px 80px;
+  line-height: 1.7;
+  color: #1e293b;
+}
+
+.policy h1 {
+  font-size: 26px;
+  font-weight: 800;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.policy section {
+  margin-bottom: 28px;
+}
+
+.policy h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.policy p {
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: #334155;
+}
+
+.policy ul {
+  padding-left: 18px;
+}
+
+.policy li {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
