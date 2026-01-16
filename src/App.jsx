@@ -36,12 +36,16 @@ function LayoutWithTabs({ children }) {
 
   return (
     <div className="app-layout">
-      {children}
+      <div className="page-scroll">
+        {children}
+        <Footer />
+      </div>
+
       {showTabs && <BottomTabs />}
-      <Footer />
     </div>
   );
 }
+
 
 
 export default function App() {
