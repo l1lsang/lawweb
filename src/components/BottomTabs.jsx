@@ -1,47 +1,34 @@
-import { NavLink } from "react-router-dom";
-import { Ionicons } from "@expo/vector-icons";
-import "./bottomTabs.css";
+import { FaHome, FaComments, FaStore, FaUsers } from "react-icons/fa";
+import { useNavigate, useLocation } from "react-router-dom";
+import "./BottomTabs.css";
 
 export default function BottomTabs() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const tabs = [
-    { to: "/", label: "홈", on: "home", off: "home-outline" },
-    {
-      to: "/chat",
-      label: "채팅",
-      on: "chatbubble-ellipses",
-      off: "chatbubble-ellipses-outline",
-    },
-    { to: "/store", label: "상점", on: "cart", off: "cart-outline" },
-    {
-      to: "/community",
-      label: "커뮤니티",
-      on: "people",
-      off: "people-outline",
-    },
+    { path: "/home", label: "홈", icon: <FaHome /> },
+    { path: "/chat", label: "채팅", icon: <FaComments /> },
+    { path: "/store", label: "상점", icon: <FaStore /> },
+    { path: "/community", label: "커뮤니티", icon: <FaUsers /> },
   ];
 
   return (
-    <nav className="tab-bar">
-      {tabs.map((tab) => (
-        <NavLink
-          key={tab.to}
-          to={tab.to}
-          className={({ isActive }) =>
-            `tab-item ${isActive ? "active" : ""}`
-          }
-        >
-          {({ isActive }) => (
-            <>
-              <Ionicons
-                name={isActive ? tab.on : tab.off}
-                size={24}
-                color={isActive ? "#2F6FFF" : "#999"}
-              />
-              <span>{tab.label}</span>
-            </>
-          )}
-        </NavLink>
-      ))}
+    <nav className="bottom-tabs">
+      {tabs.map((tab) => {
+        const active = location.pathname.startsWith(tab.path);
+
+        return (
+          <button
+            key={tab.path}
+            className={active ? "active" : ""}
+            onClick={() => navigate(tab.path)}
+          >
+            <span className="icon">{tab.icon}</span>
+            <span className="label">{tab.label}</span>
+          </button>
+        );
+      })}
     </nav>
   );
 }
