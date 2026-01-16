@@ -1,6 +1,6 @@
 import { FaHome, FaComments, FaStore, FaUsers } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
-import "./BottomTabs.css";
+import "./bottomTabs.css";
 
 export default function BottomTabs() {
   const navigate = useNavigate();
