@@ -1,0 +1,4 @@
+/* 하단 탭바 높이만큼 여백 확보 */
+body {
+  padding-bottom: 64px;
+}
