@@ -29,10 +29,13 @@ import Footer from "./components/Footer";
 ================================ */
 function LayoutWithTabs({ children }) {
   const location = useLocation();
+  const { pathname } = location;
 
-  const showTabs = ["/home", "/chat", "/store", "/community"].some(
-    (path) => location.pathname.startsWith(path)
-  );
+  const showTabs =
+    pathname === "/home" ||
+    pathname === "/chat" ||
+    pathname === "/store" ||
+    pathname === "/community";
 
   return (
     <div className="app-layout">
@@ -45,6 +48,7 @@ function LayoutWithTabs({ children }) {
     </div>
   );
 }
+
 
 
 
