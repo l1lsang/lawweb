@@ -30,19 +30,19 @@ import Footer from "./components/Footer";
 function LayoutWithTabs({ children }) {
   const location = useLocation();
 
-  // BottomTabs를 보여줄 경로들
   const showTabs = ["/home", "/chat", "/store", "/community"].some(
     (path) => location.pathname.startsWith(path)
   );
 
   return (
-    <>
+    <div className="app-layout">
       {children}
       {showTabs && <BottomTabs />}
       <Footer />
-    </>
+    </div>
   );
 }
+
 
 export default function App() {
   const [checkingAuth, setCheckingAuth] = useState(true);
