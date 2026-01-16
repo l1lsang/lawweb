@@ -1,5 +1,4 @@
 import {
-  collection,
   doc,
   getDoc,
   onSnapshot,
@@ -11,69 +10,37 @@ import { useEffect, useState } from "react";
 import { auth, db } from "../config/firebase";
 import "./Store.css";
 
+const PRICE_PER_LOBBY = 1000; // 1로비 = 1000원
+
 export default function Store() {
-  const [balance, setBalance] = useState(null);
-  const [items, setItems] = useState([]);
-  const [loadingWallet, setLoadingWallet] = useState(true);
-  const [loadingItems, setLoadingItems] = useState(true);
-  const [loadingUserItems, setLoadingUserItems] = useState(true);
-  const [userItems, setUserItems] = useState({});
-
   const user = auth.currentUser;
+  const [userItems, setUserItems] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  /* 🔹 auth 체크 */
   if (!user) {
     return (
       <div className="store-center">
-        <p className="text-sub">로그인 정보를 불러오는 중...</p>
+        <p className="text-sub">로그인이 필요합니다.</p>
       </div>
     );
   }
 
-  /* 🔹 1. 지갑 구독 */
-  useEffect(() => {
-    const walletRef = doc(db, "user_wallets", user.uid);
-
-    const initWallet = async () => {
-      const snap = await getDoc(walletRef);
-      if (!snap.exists()) {
-        await setDoc(walletRef, {
-          balance: 0,
-          createdAt: serverTimestamp(),
-        });
-      }
-      setLoadingWallet(false);
-    };
-
-    initWallet();
-
-    const unsub = onSnapshot(walletRef, (snap) => {
-      if (snap.exists()) setBalance(snap.data().balance ?? 0);
-    });
-
-    return () => unsub();
-  }, []);
-
-  /* 🔹 2. user_items 구독 */
+  /* 🔹 로비 정보 구독 */
   useEffect(() => {
     const ref = doc(db, "user_items", user.uid);
 
-    const initItems = async () => {
+    const init = async () => {
       const snap = await getDoc(ref);
       if (!snap.exists()) {
-        await setDoc(
-          ref,
-          {
-            global_chat: 0,
-            updatedAt: serverTimestamp(),
-          },
-          { merge: true }
-        );
+        await setDoc(ref, {
+          global_chat: 0,
+          updatedAt: serverTimestamp(),
+        });
       }
-      setLoadingUserItems(false);
+      setLoading(false);
     };
 
-    initItems();
+    init();
 
     const unsub = onSnapshot(ref, (snap) => {
       if (snap.exists()) setUserItems(snap.data());
@@ -82,76 +49,54 @@ export default function Store() {
     return () => unsub();
   }, []);
 
-  /* 🔹 3. 상점 아이템 */
-  useEffect(() => {
-    const ref = collection(db, "store_items");
+  /* 🔹 로비 구매 */
+  const purchaseLobby = async () => {
+    const ok = window.confirm(
+      `1로비를 ${PRICE_PER_LOBBY.toLocaleString()}원에 구매하시겠습니까?\n(결제 후 즉시 지급되며 환불이 제한됩니다)`
+    );
+    if (!ok) return;
 
-    const unsub = onSnapshot(ref, (snap) => {
-      const list = snap.docs.map((d) => ({
-        id: d.id,
-        ...d.data(),
-      }));
-      setItems(list);
-      setLoadingItems(false);
-    });
-
-    return () => unsub();
-  }, []);
-
-  /* 🔹 4. 구매 처리 */
-  const handlePurchase = async (item) => {
     try {
-      await runTransaction(db, async (transaction) => {
-        const walletRef = doc(db, "user_wallets", user.uid);
-        const itemRef = doc(db, "user_items", user.uid);
-        const purchaseRef = doc(collection(db, "purchases"));
+      /**
+       * ⚠️ 실제 결제 연동 위치
+       * 지금은 "결제 성공" 가정
+       * (나중에 토스 / 카카오페이 붙이면 여기만 교체)
+       */
 
-        const walletSnap = await transaction.get(walletRef);
-        const itemSnap = await transaction.get(itemRef);
+      await runTransaction(db, async (tx) => {
+        const ref = doc(db, "user_items", user.uid);
+        const snap = await tx.get(ref);
 
-        if (!walletSnap.exists()) throw new Error("지갑 정보 없음");
-
-        const currentBalance = walletSnap.data().balance ?? 0;
-        const globalChat = itemSnap.exists()
-          ? itemSnap.data().global_chat ?? 0
+        const current = snap.exists()
+          ? snap.data().global_chat ?? 0
           : 0;
 
-        if (currentBalance < item.priceCoins)
-          throw new Error("코인이 부족합니다.");
+        tx.set(
+          ref,
+          {
+            global_chat: current + 1,
+            updatedAt: serverTimestamp(),
+          },
+          { merge: true }
+        );
 
-        transaction.update(walletRef, {
-          balance: currentBalance - item.priceCoins,
-        });
-
-        if (item.type === "global_chat_3") {
-          transaction.set(
-            itemRef,
-            {
-              global_chat: globalChat + 3,
-              updatedAt: serverTimestamp(),
-            },
-            { merge: true }
-          );
-        }
-
-        transaction.set(purchaseRef, {
+        tx.set(doc(db, "purchases", crypto.randomUUID()), {
           userId: user.uid,
-          itemId: item.id,
-          itemName: item.name,
-          priceCoins: item.priceCoins,
-          type: item.type,
+          itemType: "global_chat",
+          quantity: 1,
+          priceWon: PRICE_PER_LOBBY,
           createdAt: serverTimestamp(),
         });
       });
 
-      window.alert(`"${item.name}"을 구매했습니다.`);
-    } catch (err) {
-      window.alert(err.message);
+      window.alert("✅ 1로비가 지급되었습니다!");
+    } catch (e) {
+      console.error(e);
+      window.alert("구매 중 오류가 발생했습니다.");
     }
   };
 
-  /* 🔹 로딩 */
-  if (loadingWallet || loadingItems || loadingUserItems) {
+  if (loading || !userItems) {
     return (
       <div className="store-center">
         <div className="loader" />
@@ -160,37 +105,36 @@ export default function Store() {
     );
   }
 
-  /* 🔹 렌더 */
   return (
     <div className="store">
-      {/* 지갑 */}
+      {/* 보유 로비 */}
       <div className="wallet-card">
-        <p className="wallet-label">보유 코인</p>
-        <p className="wallet-value">{balance} 코인</p>
+        <p className="wallet-label">보유 로비</p>
+        <p className="wallet-value">
+          {userItems.global_chat ?? 0} 회
+        </p>
       </div>
 
-      <div className="wallet-card">
-        <p className="wallet-label">전역 채팅 이용권</p>
-        <p className="wallet-value">{userItems.global_chat ?? 0} 회</p>
+      {/* 구매 */}
+      <h2 className="section-title">로비 구매</h2>
+
+      <div className="item-card">
+        <p className="item-title">상담 이용권 1회</p>
+        <p className="item-desc">
+          변호사 상담 1회를 이용할 수 있습니다.
+        </p>
+        <p className="item-price">1,000원</p>
+
+        <button className="buy-button" onClick={purchaseLobby}>
+          1로비 구매하기
+        </button>
       </div>
 
-      {/* 상품 */}
-      <h2 className="section-title">구매 가능 상품</h2>
-
-      {items.map((item) => (
-        <div key={item.id} className="item-card">
-          <p className="item-title">{item.name}</p>
-          <p className="item-desc">{item.description}</p>
-          <p className="item-price">{item.priceCoins} 로비</p>
-
-          <button
-            className="buy-button"
-            onClick={() => handlePurchase(item)}
-          >
-            구매하기
-          </button>
-        </div>
-      ))}
+      {/* 정책 안내 */}
+      <p className="policy-hint">
+        결제 시 <a href="/policy">환불 정책</a>에 동의한 것으로
+        간주됩니다.
+      </p>
     </div>
   );
 }
