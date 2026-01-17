@@ -5,7 +5,8 @@ import {
   serverTimestamp,
   setDoc,
 } from "firebase/firestore";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+
 import { auth, db } from "../config/firebase";
 import "./Store.css";
 
@@ -56,44 +57,46 @@ export default function Store() {
   }, [user.uid]);
 
   /* 🔥 토스 결제 위젯 초기화 + 렌더 */
-  useEffect(() => {
-    if (!user) return;
-    if (initializedRef.current) return; // ⭐ StrictMode 가드
-    initializedRef.current = true;
+useLayoutEffect(() => {
+  if (!user) return;
+  if (initializedRef.current) return;
+  initializedRef.current = true;
 
-    const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
-    const tossPayments = TossPayments(clientKey);
+  const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
+  const tossPayments = TossPayments(clientKey);
 
-    const w = tossPayments.widgets({
-      customerKey: user.uid,
-    });
+  const w = tossPayments.widgets({
+    customerKey: user.uid,
+  });
 
-    const initWidgets = async () => {
-      try {
-        await w.setAmount({
-          currency: "KRW",
-          value: PRICE_PER_LOBBY,
-        });
+  const initWidgets = async () => {
+    try {
+      await w.setAmount({
+        currency: "KRW",
+        value: PRICE_PER_LOBBY,
+      });
 
-        await w.renderPaymentMethods({
-          selector: "#payment-method",
-          variantKey: "DEFAULT",
-        });
+      // ⭐ 이 시점엔 DOM이 100% 존재
+      await w.renderPaymentMethods({
+        selector: "#payment-method",
+        variantKey: "DEFAULT",
+      });
 
-        await w.renderAgreement({
-          selector: "#agreement",
-          variantKey: "AGREEMENT",
-        });
+      await w.renderAgreement({
+        selector: "#agreement",
+        variantKey: "AGREEMENT",
+      });
 
-        setWidgets(w);
-        setReady(true); // ⭐ 여기서 준비 완료
-      } catch (e) {
-        console.error("토스 위젯 초기화 실패", e);
-      }
-    };
+      setWidgets(w);
+      setReady(true);
+    } catch (e) {
+      console.error("토스 위젯 초기화 실패", e);
+    }
+  };
 
-    initWidgets();
-  }, [user]);
+  initWidgets();
+}, [user]);
+
 
   /* 🔹 결제 요청 */
   const purchaseLobby = async () => {
