@@ -151,7 +151,7 @@ export default function Store() {
           <div className="wallet-card">
             <p className="wallet-label">보유 로비</p>
             <p className="wallet-value">
-              {userItems.global_chat ?? 0} 회
+              {userItems.global_chat ?? 0} 로비
             </p>
           </div>
 
