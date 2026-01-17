@@ -61,7 +61,7 @@ export default function Store() {
     if (initializedRef.current) return; // ⭐ StrictMode 가드
     initializedRef.current = true;
 
-    const clientKey = "test_gck_여기에_네_클라이언트키";
+    const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
     const tossPayments = TossPayments(clientKey);
 
     const w = tossPayments.widgets({
