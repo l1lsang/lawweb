@@ -13,9 +13,12 @@ const PRICE_PER_LOBBY = 1000;
 
 export default function Store() {
   const user = auth.currentUser;
+
   const [userItems, setUserItems] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [widgets, setWidgets] = useState(null); // ⭐ 토스 위젯 상태
 
+  /* 🔐 로그인 체크 */
   if (!user) {
     return (
       <div className="store-center">
@@ -48,44 +51,63 @@ export default function Store() {
     return () => unsub();
   }, [user.uid]);
 
-  /* 🔹 결제 시작 */
+  /* 🔥 토스 결제 위젯 초기화 + 렌더 (중요) */
+  useEffect(() => {
+    if (!user) return;
+
+    const clientKey = "test_gck_여기에_네_클라이언트키";
+    const tossPayments = TossPayments(clientKey);
+
+    const w = tossPayments.widgets({
+      customerKey: user.uid,
+    });
+
+    const initWidgets = async () => {
+      await w.setAmount({
+        currency: "KRW",
+        value: PRICE_PER_LOBBY,
+      });
+
+      // ⭐ 여기서 렌더 (절대 클릭 안에서 X)
+      await w.renderPaymentMethods({
+        selector: "#payment-method",
+        variantKey: "DEFAULT",
+      });
+
+      await w.renderAgreement({
+        selector: "#agreement",
+        variantKey: "AGREEMENT",
+      });
+
+      setWidgets(w);
+    };
+
+    initWidgets();
+  }, [user]);
+
+  /* 🔹 결제 요청 (requestPayment만!) */
   const purchaseLobby = async () => {
+    if (!widgets) {
+      alert("결제 위젯이 아직 준비되지 않았습니다.");
+      return;
+    }
+
     const ok = window.confirm(
       `1로비를 ${PRICE_PER_LOBBY.toLocaleString()}원에 구매하시겠습니까?\n(결제 후 즉시 지급되며 환불이 제한됩니다)`
     );
     if (!ok) return;
 
-    const clientKey = "test_gck_여기에_네_클라이언트키";
-    const tossPayments = TossPayments(clientKey);
-
-    const widgets = tossPayments.widgets({
-      customerKey: user.uid,
+    await widgets.requestPayment({
+      orderId: crypto.randomUUID(), // ⚠️ 실서비스에선 서버 생성 권장
+      orderName: "상담 이용권 1회",
+      successUrl: `${window.location.origin}/success.html`,
+      failUrl: `${window.location.origin}/fail.html`,
+      customerEmail: user.email ?? "user@example.com",
+      customerName: "사용자",
     });
-
-    await widgets.setAmount({
-      currency: "KRW",
-      value: PRICE_PER_LOBBY,
-    });
-
-    await widgets.renderPaymentMethods({
-      selector: "#payment-method",
-      variantKey: "DEFAULT",
-    });
-
-    await widgets.renderAgreement({
-      selector: "#agreement",
-      variantKey: "AGREEMENT",
-    });
-
-  await widgets.requestPayment({
-  orderId: crypto.randomUUID(),
-  orderName: "상담 이용권 1회",
-  successUrl: `${window.location.origin}/success.html`,
-  failUrl: `${window.location.origin}/fail.html`,
-});
-
   };
 
+  /* 🔄 로딩 상태 */
   if (loading || !userItems) {
     return (
       <div className="store-center">
@@ -95,11 +117,12 @@ export default function Store() {
     );
   }
 
+  /* 🖥️ UI */
   return (
     <div className="store">
-      {/* 결제 UI 자리 */}
-      <div id="payment-method" />
-      <div id="agreement" />
+      {/* ⭐ 결제 위젯 DOM (항상 존재해야 함) */}
+      <div id="payment-method"></div>
+      <div id="agreement"></div>
 
       {/* 보유 로비 */}
       <div className="wallet-card">
