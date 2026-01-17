@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <title>결제 처리 중...</title>
+  </head>
+  <body>
+    <script>
+      // 토스에서 받은 쿼리를 그대로 React로 전달
+      location.replace(
+        "/payment-success" + window.location.search
+      );
+    </script>
+  </body>
+</html>

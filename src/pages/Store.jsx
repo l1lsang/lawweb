@@ -77,14 +77,13 @@ export default function Store() {
       variantKey: "AGREEMENT",
     });
 
-    await widgets.requestPayment({
-      orderId: crypto.randomUUID(), // ⚠️ 실서비스에선 서버 생성
-      orderName: "상담 이용권 1회",
-      successUrl: `${window.location.origin}/payment-success`,
-      failUrl: `${window.location.origin}/payment-fail`,
-      customerEmail: user.email ?? "user@example.com",
-      customerName: "사용자",
-    });
+  await widgets.requestPayment({
+  orderId: crypto.randomUUID(),
+  orderName: "상담 이용권 1회",
+  successUrl: `${window.location.origin}/success.html`,
+  failUrl: `${window.location.origin}/fail.html`,
+});
+
   };
 
   if (loading || !userItems) {
