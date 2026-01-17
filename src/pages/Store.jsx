@@ -5,7 +5,7 @@ import {
   serverTimestamp,
   setDoc,
 } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { auth, db } from "../config/firebase";
 import "./Store.css";
 
@@ -16,7 +16,11 @@ export default function Store() {
 
   const [userItems, setUserItems] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [widgets, setWidgets] = useState(null); // ⭐ 토스 위젯 상태
+
+  const [widgets, setWidgets] = useState(null);
+  const [ready, setReady] = useState(false); // ⭐ 위젯 준비 상태
+
+  const initializedRef = useRef(false); // ⭐ StrictMode 중복 방지
 
   /* 🔐 로그인 체크 */
   if (!user) {
@@ -51,9 +55,11 @@ export default function Store() {
     return () => unsub();
   }, [user.uid]);
 
-  /* 🔥 토스 결제 위젯 초기화 + 렌더 (중요) */
+  /* 🔥 토스 결제 위젯 초기화 + 렌더 */
   useEffect(() => {
     if (!user) return;
+    if (initializedRef.current) return; // ⭐ StrictMode 가드
+    initializedRef.current = true;
 
     const clientKey = "test_gck_여기에_네_클라이언트키";
     const tossPayments = TossPayments(clientKey);
@@ -63,34 +69,35 @@ export default function Store() {
     });
 
     const initWidgets = async () => {
-      await w.setAmount({
-        currency: "KRW",
-        value: PRICE_PER_LOBBY,
-      });
+      try {
+        await w.setAmount({
+          currency: "KRW",
+          value: PRICE_PER_LOBBY,
+        });
 
-      // ⭐ 여기서 렌더 (절대 클릭 안에서 X)
-      await w.renderPaymentMethods({
-        selector: "#payment-method",
-        variantKey: "DEFAULT",
-      });
+        await w.renderPaymentMethods({
+          selector: "#payment-method",
+          variantKey: "DEFAULT",
+        });
 
-      await w.renderAgreement({
-        selector: "#agreement",
-        variantKey: "AGREEMENT",
-      });
+        await w.renderAgreement({
+          selector: "#agreement",
+          variantKey: "AGREEMENT",
+        });
 
-      setWidgets(w);
+        setWidgets(w);
+        setReady(true); // ⭐ 여기서 준비 완료
+      } catch (e) {
+        console.error("토스 위젯 초기화 실패", e);
+      }
     };
 
     initWidgets();
   }, [user]);
 
-  /* 🔹 결제 요청 (requestPayment만!) */
+  /* 🔹 결제 요청 */
   const purchaseLobby = async () => {
-    if (!widgets) {
-      alert("결제 위젯이 아직 준비되지 않았습니다.");
-      return;
-    }
+    if (!ready || !widgets) return;
 
     const ok = window.confirm(
       `1로비를 ${PRICE_PER_LOBBY.toLocaleString()}원에 구매하시겠습니까?\n(결제 후 즉시 지급되며 환불이 제한됩니다)`
@@ -141,8 +148,12 @@ export default function Store() {
         </p>
         <p className="item-price">1,000원</p>
 
-        <button className="buy-button" onClick={purchaseLobby}>
-          1로비 구매하기
+        <button
+          className="buy-button"
+          onClick={purchaseLobby}
+          disabled={!ready}
+        >
+          {ready ? "1로비 구매하기" : "결제 준비 중..."}
         </button>
       </div>
 
