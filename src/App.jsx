@@ -20,7 +20,7 @@ import QuickStart from "./pages/QuickStart";
 import Waiting from "./pages/Waiting";
 import ChatRoom from "./pages/ChatRoom";
 import Policy from "./pages/Policy";
-
+import PaymentSuccess from "./pages/PaymentSuccess";
 /* ===== 공통 컴포넌트 ===== */
 import Footer from "./components/Footer";
 
@@ -91,6 +91,7 @@ export default function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/store" element={<Store />} />
+           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/community" element={<Community />} />
 
           {/* 🧩 커뮤니티 */}

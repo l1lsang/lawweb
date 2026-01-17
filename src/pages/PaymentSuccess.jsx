@@ -1,0 +1,88 @@
+import {
+  doc,
+  runTransaction,
+  serverTimestamp,
+} from "firebase/firestore";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { auth, db } from "../config/firebase";
+
+const PRICE_PER_LOBBY = 1000;
+
+export default function PaymentSuccess() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const paymentKey = params.get("paymentKey");
+    const orderId = params.get("orderId");
+    const amount = Number(params.get("amount"));
+
+    if (!paymentKey || !orderId || amount !== PRICE_PER_LOBBY) {
+      alert("잘못된 결제 요청입니다.");
+      navigate("/store");
+      return;
+    }
+
+    const confirmAndGrant = async () => {
+      // ✅ 1. 서버에 결제 승인 요청
+      const res = await fetch("/confirm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ paymentKey, orderId, amount }),
+      });
+
+      if (!res.ok) {
+        alert("결제 승인에 실패했습니다.");
+        navigate("/store");
+        return;
+      }
+
+      // ✅ 2. 결제 승인 성공 → 로비 지급
+      const user = auth.currentUser;
+      if (!user) {
+        alert("로그인이 필요합니다.");
+        navigate("/store");
+        return;
+      }
+
+      await runTransaction(db, async (tx) => {
+        const ref = doc(db, "user_items", user.uid);
+        const snap = await tx.get(ref);
+
+        const current = snap.exists()
+          ? snap.data().global_chat ?? 0
+          : 0;
+
+        tx.set(
+          ref,
+          {
+            global_chat: current + 1,
+            updatedAt: serverTimestamp(),
+          },
+          { merge: true }
+        );
+
+        tx.set(doc(db, "purchases", orderId), {
+          userId: user.uid,
+          itemType: "global_chat",
+          quantity: 1,
+          priceWon: PRICE_PER_LOBBY,
+          createdAt: serverTimestamp(),
+        });
+      });
+
+      alert("✅ 결제가 완료되고 로비가 지급되었습니다!");
+      navigate("/store");
+    };
+
+    confirmAndGrant();
+  }, [navigate]);
+
+  return (
+    <div className="store-center">
+      <div className="loader" />
+      <p className="text-sub">결제를 처리 중입니다...</p>
+    </div>
+  );
+}
