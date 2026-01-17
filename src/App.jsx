@@ -100,7 +100,7 @@ export default function App() {
 
           {/* ⚡ 빠른 상담 */}
          <Route path="/quick/start" element={<QuickStart />} />
-<Route path="/quick/chat" element={<QuickChat />} />
+<Route path="/quick/chat" element={<QuickStart />} />
 
           <Route path="/waiting" element={<Waiting />} />
 
