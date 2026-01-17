@@ -19,6 +19,7 @@ export default function Store() {
 
   const [widgets, setWidgets] = useState(null);
   const [ready, setReady] = useState(false);
+  const [open, setOpen] = useState(false); // ⭐ 결제 팝업 상태
 
   const initializedRef = useRef(false);
 
@@ -55,7 +56,7 @@ export default function Store() {
     return () => unsub();
   }, [user.uid]);
 
-  /* 🔥 토스 결제 위젯 초기화 (DOM 보장 시점) */
+  /* 🔥 토스 결제 위젯 초기화 (DOM 항상 존재) */
   useLayoutEffect(() => {
     if (!user) return;
     if (initializedRef.current) return;
@@ -95,14 +96,9 @@ export default function Store() {
     initWidgets();
   }, [user]);
 
-  /* 🔹 결제 요청 */
-  const purchaseLobby = async () => {
+  /* 🔹 결제 요청 (팝업 안에서만 실행) */
+  const requestPayment = async () => {
     if (!ready || !widgets) return;
-
-    const ok = window.confirm(
-      `1로비를 ${PRICE_PER_LOBBY.toLocaleString()}원에 구매하시겠습니까?\n(결제 후 즉시 지급되며 환불이 제한됩니다)`
-    );
-    if (!ok) return;
 
     await widgets.requestPayment({
       orderId: crypto.randomUUID(),
@@ -114,14 +110,36 @@ export default function Store() {
     });
   };
 
-  /* 🖥️ UI (DOM은 항상 존재!) */
+  /* 🖥️ UI */
   return (
     <div className="store">
-      {/* ⭐ 토스 위젯 DOM – 절대 조건부 렌더링 X */}
-      <div id="payment-method"></div>
-      <div id="agreement"></div>
+      {/* ===============================
+          결제 팝업 (DOM 항상 존재)
+         =============================== */}
+      <div className={`payment-modal ${open ? "open" : ""}`}>
+        <div className="payment-modal-inner">
+          <h3>결제 수단 선택</h3>
 
-      {/* 로딩 오버레이 */}
+          <div id="payment-method"></div>
+          <div id="agreement"></div>
+
+          <button
+            className="buy-button"
+            onClick={requestPayment}
+            disabled={!ready}
+          >
+            {ready ? "결제하기" : "결제 준비 중..."}
+          </button>
+
+          <button className="close-button" onClick={() => setOpen(false)}>
+            닫기
+          </button>
+        </div>
+      </div>
+
+      {/* ===============================
+          상점 메인 UI
+         =============================== */}
       {loading || !userItems ? (
         <div className="store-center">
           <div className="loader" />
@@ -146,9 +164,10 @@ export default function Store() {
             </p>
             <p className="item-price">1,000원</p>
 
+            {/* ⭐ 여기서는 팝업만 열기 */}
             <button
               className="buy-button"
-              onClick={purchaseLobby}
+              onClick={() => setOpen(true)}
               disabled={!ready}
             >
               {ready ? "1로비 구매하기" : "결제 준비 중..."}
