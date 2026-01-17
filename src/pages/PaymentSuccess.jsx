@@ -25,7 +25,9 @@ export default function PaymentSuccess() {
     }
 
     const confirmAndGrant = async () => {
-      // ✅ 1. 서버에 결제 승인 요청
+      /* =========================
+         1️⃣ 서버에 결제 승인 요청
+         ========================= */
       const res = await fetch("/confirm", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -38,7 +40,9 @@ export default function PaymentSuccess() {
         return;
       }
 
-      // ✅ 2. 결제 승인 성공 → 로비 지급
+      /* =========================
+         2️⃣ 로비 지급 (Firestore)
+         ========================= */
       const user = auth.currentUser;
       if (!user) {
         alert("로그인이 필요합니다.");
@@ -54,6 +58,7 @@ export default function PaymentSuccess() {
           ? snap.data().global_chat ?? 0
           : 0;
 
+        // 로비 지급
         tx.set(
           ref,
           {
@@ -63,6 +68,7 @@ export default function PaymentSuccess() {
           { merge: true }
         );
 
+        // 구매 기록 (orderId 기준 → 중복 방지)
         tx.set(doc(db, "purchases", orderId), {
           userId: user.uid,
           itemType: "global_chat",
@@ -71,6 +77,19 @@ export default function PaymentSuccess() {
           createdAt: serverTimestamp(),
         });
       });
+
+      /* =========================
+         3️⃣ 앱(WebView)에 결제 성공 알림
+         ========================= */
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: "PAYMENT_SUCCESS",
+            orderId,
+            amount,
+          })
+        );
+      }
 
       alert("✅ 결제가 완료되고 로비가 지급되었습니다!");
       navigate("/store");
